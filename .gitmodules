@@ -8,3 +8,7 @@
 [submodule "Spot-MuJoCo-ROS2"]
 	path = Spot-MuJoCo-ROS2
 	url = git@github.com:mlisi1/Spot-MuJoCo-ROS2.git
+[submodule "champ"]
+	path = champ
+	url = git@github.com:chvmp/champ.git
+	branch = ros2
