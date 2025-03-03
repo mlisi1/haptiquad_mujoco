@@ -44,7 +44,9 @@ def generate_launch_description():
         emulate_tty=True,
         parameters=[{
             'autoscale':True,
-            'listening':True
+            'listening':True,
+            'legs_prefix': ["LF", "LH", "RF", "RH"],
+            'foot_suffix': 'FOOT'
         }]
     )
 
@@ -55,7 +57,8 @@ def generate_launch_description():
         parameters=[{
             'autoscale':True,
             'listening':True,
-            'x_lim':3000
+            'x_lim':3000,
+            'legs_prefix': ["LF", "LH", "RF", "RH"],
         }]
     )
 
