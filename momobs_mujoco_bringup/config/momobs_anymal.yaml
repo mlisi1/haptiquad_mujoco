@@ -1,0 +1,17 @@
+momobs_ros2:
+  ros__parameters:
+
+    observer:
+    
+      k_int: 90.0
+      k_ext: 80.0
+
+      rescale: false
+
+      friction:
+
+        friction: false
+
+    estimator:
+
+      num_contacts: 4

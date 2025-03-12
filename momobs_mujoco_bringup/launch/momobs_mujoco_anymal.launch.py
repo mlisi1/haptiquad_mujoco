@@ -19,16 +19,22 @@ def generate_launch_description():
     momobs_ros_pkg = get_package_share_directory('momobs_ros2')
     mujoco_pkg = get_package_share_directory('mujoco')
     config_pkg_share = get_package_share_directory('anymal_c_config')
+    self_pkg = get_package_share_directory('momobs_mujoco_bringup')
 
 
     description_launch_file = os.path.join(description_pkg, 'launch', 'floating_base_description.launch.py')   
     momobs_launch_file = os.path.join(momobs_ros_pkg, 'launch', 'mujoco_wrapper.launch.py')
-    mujoco_launch_file = os.path.join(mujoco_pkg, 'launch', 'simulation.launch.py')
+    mujoco_launch_file = os.path.join(mujoco_pkg, 'launch', 'anymal_simulation.launch.py')
 
     default_model_path = os.path.join(description_pkg, "urdf/anymal_main.xacro")
     xacro_content = xacro.process_file(default_model_path)
 
-    momobs = IncludeLaunchDescription(PythonLaunchDescriptionSource(momobs_launch_file))
+    momobs_config = os.path.join(self_pkg, 'config', 'momobs_anymal.yaml')
+
+    momobs = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(momobs_launch_file),
+            launch_arguments={'config_file': momobs_config}.items()
+    ) 
     description = IncludeLaunchDescription(PythonLaunchDescriptionSource(description_launch_file))
     mujoco = IncludeLaunchDescription(PythonLaunchDescriptionSource(mujoco_launch_file))
 
@@ -45,6 +51,8 @@ def generate_launch_description():
         parameters=[{
             'autoscale':True,
             'listening':True,
+            'x_lim': 5.0,
+            'memory_limit': 1000,
             'legs_prefix': ["LF", "LH", "RF", "RH"],
             'foot_suffix': 'FOOT'
         }]
@@ -54,10 +62,12 @@ def generate_launch_description():
         package='momobs_plot',
         executable='residual_plotter.py',
         condition=IfCondition(LaunchConfiguration('residuals')),
+        emulate_tty = True,
         parameters=[{
             'autoscale':True,
             'listening':True,
-            'x_lim':3000,
+            'x_lim':5.0,
+            'memory_limit': 1000,
             'legs_prefix': ["LF", "LH", "RF", "RH"],
         }]
     )
