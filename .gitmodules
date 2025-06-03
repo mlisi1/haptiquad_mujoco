@@ -1,6 +1,3 @@
-[submodule "momobs_ros2"]
-	path = momobs_ros2
-	url = git@github.com:mlisi1/momobs_ros2.git
 [submodule "anymal_c_simple_description"]
 	path = anymal_c_simple_description
 	url = git@github.com:mlisi1/anymal_c_simple_description.git
@@ -12,3 +9,6 @@
 	path = champ
 	url = git@github.com:chvmp/champ.git
 	branch = ros2
+[submodule "haptiquad_ros2"]
+	path = haptiquad_ros2
+	url = git@github.com:mlisi1/haptiquad_ros2.git

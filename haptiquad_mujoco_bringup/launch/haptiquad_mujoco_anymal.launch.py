@@ -16,24 +16,24 @@ def generate_launch_description():
 
 
     description_pkg = get_package_share_directory('anymal_c_simple_description')
-    momobs_ros_pkg = get_package_share_directory('momobs_ros2')
+    haptiquad_ros_pkg = get_package_share_directory('haptiquad_ros2')
     mujoco_pkg = get_package_share_directory('mujoco')
     config_pkg_share = get_package_share_directory('anymal_c_config')
-    self_pkg = get_package_share_directory('momobs_mujoco_bringup')
+    self_pkg = get_package_share_directory('haptiquad_mujoco_bringup')
 
 
     description_launch_file = os.path.join(description_pkg, 'launch', 'floating_base_description.launch.py')   
-    momobs_launch_file = os.path.join(momobs_ros_pkg, 'launch', 'mujoco_wrapper.launch.py')
+    haptiquad_launch_file = os.path.join(haptiquad_ros_pkg, 'launch', 'mujoco_wrapper.launch.py')
     mujoco_launch_file = os.path.join(mujoco_pkg, 'launch', 'anymal_simulation.launch.py')
 
     default_model_path = os.path.join(description_pkg, "urdf/anymal_main.xacro")
     xacro_content = xacro.process_file(default_model_path)
 
-    momobs_config = os.path.join(self_pkg, 'config', 'momobs_anymal.yaml')
+    haptiquad_config = os.path.join(self_pkg, 'config', 'haptiquad_anymal.yaml')
 
-    momobs = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(momobs_launch_file),
-            launch_arguments={'config_file': momobs_config}.items()
+    haptiquad = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(haptiquad_launch_file),
+            launch_arguments={'config_file': haptiquad_config}.items()
     ) 
     description = IncludeLaunchDescription(PythonLaunchDescriptionSource(description_launch_file))
     mujoco = IncludeLaunchDescription(PythonLaunchDescriptionSource(mujoco_launch_file))
@@ -44,7 +44,7 @@ def generate_launch_description():
 
 
     force_plotter = Node(
-        package='momobs_plot',
+        package='haptiquad_plot',
         executable='force_plotter.py',
         condition=IfCondition(LaunchConfiguration('force')),
         emulate_tty=True,
@@ -59,7 +59,7 @@ def generate_launch_description():
     )
 
     residual_plotter = Node(
-        package='momobs_plot',
+        package='haptiquad_plot',
         executable='residual_plotter.py',
         condition=IfCondition(LaunchConfiguration('residuals')),
         emulate_tty = True,
@@ -100,7 +100,7 @@ def generate_launch_description():
             force_arg,
             residual_arg,
             description,
-            momobs,
+            haptiquad,
             force_plotter,
             residual_plotter,
             mujoco,

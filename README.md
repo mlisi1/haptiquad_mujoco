@@ -1,1 +1,1 @@
-# momobs_mujoco
+# haptiquad_mujoco

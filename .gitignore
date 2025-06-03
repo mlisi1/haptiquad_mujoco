@@ -1,6 +1,11 @@
 Spot-MuJoCo-ROS2/simulation/mujoco/launch/solo12_simulation.launch.py
 Spot-MuJoCo-ROS2/simulation/mujoco/launch/spot_simulation.launch.py
 Spot-MuJoCo-ROS2/simulation/mujoco/launch/unitree_go2_simulation.launch.py
-momobs_mujoco_bringup/launch/momobs_mujoco_solo12.launch.py
-momobs_mujoco_bringup/launch/momobs_mujoco_spot.launch.py
-momobs_mujoco_bringup/launch/momobs_mujoco_unitree_go2.launch.py
+haptiquad_mujoco_bringup/launch/haptiquad_mujoco_solo12.launch.py
+haptiquad_mujoco_bringup/launch/haptiquad_mujoco_spot.launch.py
+haptiquad_mujoco_bringup/launch/haptiquad_mujoco_unitree_go2.launch.py
+
+
+docker_res/*
+compose.yaml
+Dockerfile

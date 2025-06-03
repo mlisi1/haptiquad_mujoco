@@ -1,4 +1,4 @@
-momobs_ros2:
+haptiquad_ros2:
   ros__parameters:
 
     observer:
