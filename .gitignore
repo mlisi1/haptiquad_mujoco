@@ -5,7 +5,3 @@ haptiquad_mujoco_bringup/launch/haptiquad_mujoco_solo12.launch.py
 haptiquad_mujoco_bringup/launch/haptiquad_mujoco_spot.launch.py
 haptiquad_mujoco_bringup/launch/haptiquad_mujoco_unitree_go2.launch.py
 
-
-docker_res/*
-compose.yaml
-Dockerfile
