@@ -15,3 +15,4 @@ haptiquad_ros2:
     estimator:
 
       num_contacts: 4
+      calculate_residual_error: true
