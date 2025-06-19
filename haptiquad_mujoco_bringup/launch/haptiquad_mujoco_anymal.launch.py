@@ -1,10 +1,10 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, SetEnvironmentVariable, GroupAction
 from launch.substitutions import LaunchConfiguration
 from launch.conditions import IfCondition
-from launch_ros.actions import Node
+from launch_ros.actions import Node, SetRemap
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 import xacro
 
@@ -13,6 +13,22 @@ def generate_launch_description():
 
     force_arg = DeclareLaunchArgument('force', default_value='false', description='Launch extra nodes if true')
     residual_arg = DeclareLaunchArgument('residuals', default_value='false', description='Launch extra nodes if true')
+    use_nvidia_arg = DeclareLaunchArgument('use_nvidia', default_value='false', description='Uses nVidia GPU for Mujoco rendering if true')
+
+
+    use_nvidia = LaunchConfiguration("use_nvidia")
+
+    gpu1 = SetEnvironmentVariable('__NV_PRIME_RENDER_OFFLOAD', '1')
+    gpu2 = SetEnvironmentVariable('__GLX_VENDOR_LIBRARY_NAME', 'nvidia')
+
+    gpu1 = SetEnvironmentVariable(
+        '__NV_PRIME_RENDER_OFFLOAD', '1',
+        condition=IfCondition(use_nvidia)
+    )
+    gpu2 = SetEnvironmentVariable(
+        '__GLX_VENDOR_LIBRARY_NAME', 'nvidia',
+        condition=IfCondition(use_nvidia)
+    )
 
 
     description_pkg = get_package_share_directory('anymal_c_simple_description')
@@ -35,7 +51,13 @@ def generate_launch_description():
             PythonLaunchDescriptionSource(haptiquad_launch_file),
             launch_arguments={'config_file': haptiquad_config}.items()
     ) 
-    description = IncludeLaunchDescription(PythonLaunchDescriptionSource(description_launch_file))
+
+    description_ = IncludeLaunchDescription(PythonLaunchDescriptionSource(description_launch_file))
+    description = GroupAction([
+        SetRemap('joint_states', 'simulation/joint_states'),
+        description_
+    ])
+
     mujoco = IncludeLaunchDescription(PythonLaunchDescriptionSource(mujoco_launch_file))
 
     joints_config = os.path.join(config_pkg_share, "config/joints/joints.yaml")
@@ -96,7 +118,10 @@ def generate_launch_description():
 
 
     return LaunchDescription(
-        [
+        [   
+            use_nvidia_arg,
+            gpu1,
+            gpu2,
             force_arg,
             residual_arg,
             description,
@@ -104,6 +129,7 @@ def generate_launch_description():
             force_plotter,
             residual_plotter,
             mujoco,
-            quadruped_controller_node
+            quadruped_controller_node,
+            
         ]
     )
