@@ -12,3 +12,6 @@
 [submodule "haptiquad_ros2"]
 	path = haptiquad_ros2
 	url = git@github.com:mlisi1/haptiquad_ros2.git
+[submodule "haptiquad_contacts"]
+	path = haptiquad_contacts
+	url = git@github.com:mlisi1/haptiquad_contacts.git

@@ -14,9 +14,11 @@ def generate_launch_description():
     force_arg = DeclareLaunchArgument('force', default_value='false', description='Launch extra nodes if true')
     residual_arg = DeclareLaunchArgument('residuals', default_value='false', description='Launch extra nodes if true')
     use_nvidia_arg = DeclareLaunchArgument('use_nvidia', default_value='false', description='Uses nVidia GPU for Mujoco rendering if true')
+    estimate_contacts_arg = DeclareLaunchArgument('estimate_contacts', default_value='false', description='Wether to launch or not the contact estimation package')
 
 
     use_nvidia = LaunchConfiguration("use_nvidia")
+    estimate_contacts = LaunchConfiguration("estimate_contacts")
 
     gpu1 = SetEnvironmentVariable('__NV_PRIME_RENDER_OFFLOAD', '1')
     gpu2 = SetEnvironmentVariable('__GLX_VENDOR_LIBRARY_NAME', 'nvidia')
@@ -36,11 +38,13 @@ def generate_launch_description():
     mujoco_pkg = get_package_share_directory('mujoco')
     config_pkg_share = get_package_share_directory('anymal_c_config')
     self_pkg = get_package_share_directory('haptiquad_mujoco_bringup')
+    haptiquad_contacts_pkg = get_package_share_directory('haptiquad_contacts')
 
 
     description_launch_file = os.path.join(description_pkg, 'launch', 'floating_base_description.launch.py')   
     haptiquad_launch_file = os.path.join(haptiquad_ros_pkg, 'launch', 'mujoco_wrapper.launch.py')
     mujoco_launch_file = os.path.join(mujoco_pkg, 'launch', 'anymal_simulation.launch.py')
+    estimate_contacts_launch_file = os.path.join(haptiquad_contacts_pkg, 'launch', 'haptiquad_estimator_mujoco.launch.py')
 
     default_model_path = os.path.join(description_pkg, "urdf/anymal_main.xacro")
     xacro_content = xacro.process_file(default_model_path)
@@ -51,6 +55,12 @@ def generate_launch_description():
             PythonLaunchDescriptionSource(haptiquad_launch_file),
             launch_arguments={'config_file': haptiquad_config}.items()
     ) 
+
+    estimate_contacts_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(estimate_contacts_launch_file),
+        launch_arguments={'rviz': str(True), "plot": str(True)}.items(),
+        condition=IfCondition(estimate_contacts)
+    )
 
     description_ = IncludeLaunchDescription(PythonLaunchDescriptionSource(description_launch_file))
     description = GroupAction([
@@ -130,6 +140,7 @@ def generate_launch_description():
             residual_plotter,
             mujoco,
             quadruped_controller_node,
-            
+            estimate_contacts_arg,     
+            estimate_contacts_launch       
         ]
     )
