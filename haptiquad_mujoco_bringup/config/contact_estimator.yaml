@@ -1,0 +1,9 @@
+haptiquad_contacts:
+  ros__parameters:
+
+    force_tol: 3.0
+    num_lines: 900 #90000
+    tolerance: 1.5
+    use_gt: false
+    minimum_force_norm: 5.0
+    z_compensation: -20.0

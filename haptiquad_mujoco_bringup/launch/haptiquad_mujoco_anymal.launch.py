@@ -50,6 +50,7 @@ def generate_launch_description():
     xacro_content = xacro.process_file(default_model_path)
 
     haptiquad_config = os.path.join(self_pkg, 'config', 'haptiquad_anymal.yaml')
+    contact_estimator_config = os.path.join(self_pkg, 'config', 'contact_estimator.yaml')
 
     haptiquad = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(haptiquad_launch_file),
