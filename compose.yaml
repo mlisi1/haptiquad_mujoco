@@ -3,13 +3,26 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: haptiquad_mujoco
+    stdin_open: true
+    tty: true
     network_mode: host
     ipc: host
     runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /dev/nvidia0:/dev/nvidia0
+      - /dev/nvidiactl:/dev/nvidiactl
+      - /dev/nvidia-modeset:/dev/nvidia-modeset
     environment:
       - ROS_DOMAIN_ID
       - DISPLAY
       - NVIDIA_VISIBLE_DEVICES=all
-      - NVIDIA_DRIVER_CAPABILITIES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all,graphics,display,video,utility,compute

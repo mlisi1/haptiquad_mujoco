@@ -1,5 +1,42 @@
+FROM ubuntu:22.04 AS builder
+
+# Install build essentials
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    git \
+    python3-dev \
+    python3-pip \
+    libgl1-mesa-dev \
+    libx11-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libtiff-dev \
+    libeigen3-dev \
+    libomp-dev \
+    xorg-dev \
+    libxcb-shm0 \
+    libglu1-mesa-dev \
+    libc++-dev \
+    libc++abi-dev \
+    libsdl2-dev \
+    libxi-dev \
+    libtbb-dev \
+    libosmesa6-dev \
+    libudev-dev \
+    autoconf \
+    libtool \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install cmake
+
+RUN git clone https://github.com/isl-org/Open3D && cd Open3D && mkdir build && cd build && cmake .. && make -j$(nproc)
+
+RUN cd Open3D/build && make install DESTDIR=/open3d-install
+
 FROM osrf/ros:humble-desktop-full-jammy
 
+COPY --from=builder /open3d-install/ /
 
 # Create a non-root user
 ARG USERNAME=ros
@@ -15,7 +52,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
 
 # Set up sudo
 RUN apt-get update \
-  && apt-get upgrade \
+  && apt-get upgrade -y \
   && apt-get install -y sudo \
   && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME\
   && chmod 0440 /etc/sudoers.d/$USERNAME \
@@ -49,6 +86,8 @@ RUN apt-get update && apt-get install -y \
     libglfw3 \
     libglfw3-dev \
     libglew-dev \
+    libc++-dev \
+    libc++abi-dev \
     ros-humble-robot-state-publisher \
     ros-humble-pinocchio \
     ros-humble-gazebo-ros2-control \
@@ -67,10 +106,10 @@ COPY haptiquad_mujoco_bringup /home/$USERNAME/haptiquad_mujoco/haptiquad_mujoco_
 COPY champ /home/$USERNAME/haptiquad_mujoco/champ
 COPY haptiquad_ros2 /home/$USERNAME/haptiquad_mujoco/haptiquad_ros2
 COPY Spot-MuJoCo-ROS2 /home/$USERNAME/haptiquad_mujoco/Spot-MuJoCo-ROS2
+COPY haptiquad_contacts /home/$USERNAME/haptiquad_mujoco/haptiquad_contacts
 COPY build.sh /home/$USERNAME/haptiquad_mujoco/
 RUN sudo chmod +x /home/ros/haptiquad_mujoco/build.sh
 RUN bash -c "source /home/ros/.bashrc && haptiquad_mujoco/build.sh"
-
 # RUN sudo echo 'source /home/ros/install/setup.bash' >> /home/${USERNAME}/.bashrc
 
 
