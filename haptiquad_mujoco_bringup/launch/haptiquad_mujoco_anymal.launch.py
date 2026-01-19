@@ -15,7 +15,9 @@ def generate_launch_description():
     residual_arg = DeclareLaunchArgument('residuals', default_value='false', description='Launch extra nodes if true')
     use_nvidia_arg = DeclareLaunchArgument('use_nvidia', default_value='false', description='Uses nVidia GPU for Mujoco rendering if true')
     estimate_contacts_arg = DeclareLaunchArgument('estimate_contacts', default_value='false', description='Wether to launch or not the contact estimation package')
-
+    mass_scale = DeclareLaunchArgument('mass_scale', default_value='1.0', description="Mass scale factor")
+    inertia_scale = DeclareLaunchArgument('inertia_scale', default_value='1.0', description="Inertia scale factor")
+    debug = DeclareLaunchArgument('debug', default_value='false', description="Debug mode")
 
     use_nvidia = LaunchConfiguration("use_nvidia")
     estimate_contacts = LaunchConfiguration("estimate_contacts")
@@ -54,7 +56,12 @@ def generate_launch_description():
 
     haptiquad = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(haptiquad_launch_file),
-            launch_arguments={'config_file': haptiquad_config}.items()
+            launch_arguments={
+                'config_file': haptiquad_config,
+                'mass_scale': LaunchConfiguration('mass_scale'),
+                'inertia_scale': LaunchConfiguration('inertia_scale'),
+                'debug': LaunchConfiguration('debug')
+            }.items()
     ) 
 
     estimate_contacts_launch = IncludeLaunchDescription(
@@ -131,6 +138,9 @@ def generate_launch_description():
     return LaunchDescription(
         [   
             use_nvidia_arg,
+            debug,
+            mass_scale,
+            inertia_scale,
             gpu1,
             gpu2,
             force_arg,
