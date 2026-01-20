@@ -1,3 +1,8 @@
 source /opt/ros/humble/setup.bash
 source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
 source /home/ros/install/setup.bash || true
+
+
+alias haptiquad_mujoco='ros2 launch haptiquad_mujoco_bringup haptiquad_mujoco_anymal.launch.py'
+alias force_plot='ros2 launch haptiquad_mujoco_bringup force_plotter.launch.py '
+alias residual_plot='ros2 launch haptiquad_mujoco_bringup residual_plotter.launch.py'

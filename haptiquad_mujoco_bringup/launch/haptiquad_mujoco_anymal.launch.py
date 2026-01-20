@@ -2,7 +2,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, SetEnvironmentVariable, GroupAction
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch.conditions import IfCondition
 from launch_ros.actions import Node, SetRemap
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -18,6 +18,8 @@ def generate_launch_description():
     mass_scale = DeclareLaunchArgument('mass_scale', default_value='1.0', description="Mass scale factor")
     inertia_scale = DeclareLaunchArgument('inertia_scale', default_value='1.0', description="Inertia scale factor")
     debug = DeclareLaunchArgument('debug', default_value='false', description="Debug mode")
+    drop_prob = DeclareLaunchArgument('drop_prob', default_value='0.0', description="Message drop probability [0.0-1.0]")
+    use_burst = DeclareLaunchArgument('use_burst', default_value='False', description="Use burst config file for message dropping")
 
     use_nvidia = LaunchConfiguration("use_nvidia")
     estimate_contacts = LaunchConfiguration("estimate_contacts")
@@ -54,13 +56,25 @@ def generate_launch_description():
     haptiquad_config = os.path.join(self_pkg, 'config', 'haptiquad_anymal.yaml')
     contact_estimator_config = os.path.join(self_pkg, 'config', 'contact_estimator.yaml')
 
+    burst_config = os.path.join(self_pkg, 'config', 'burst_loss_config.yaml')
+    null_burst_config = os.path.join(haptiquad_ros_pkg, 'config', 'null_burst_config.yaml')
+
+    b_config = PythonExpression([
+        f"'{burst_config}'",  # Python string literal
+        " if ", LaunchConfiguration('use_burst'), " == True else ",
+        f"'{null_burst_config}'"  # Python string literal
+    ])
+
+
     haptiquad = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(haptiquad_launch_file),
             launch_arguments={
                 'config_file': haptiquad_config,
+                'burst_config': b_config,
                 'mass_scale': LaunchConfiguration('mass_scale'),
                 'inertia_scale': LaunchConfiguration('inertia_scale'),
-                'debug': LaunchConfiguration('debug')
+                'debug': LaunchConfiguration('debug'),
+                'drop_prob': LaunchConfiguration('drop_prob')
             }.items()
     ) 
 
@@ -141,6 +155,8 @@ def generate_launch_description():
             debug,
             mass_scale,
             inertia_scale,
+            drop_prob,
+            use_burst,
             gpu1,
             gpu2,
             force_arg,

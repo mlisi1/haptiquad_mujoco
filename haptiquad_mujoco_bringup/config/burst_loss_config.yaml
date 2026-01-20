@@ -1,0 +1,9 @@
+haptiquad_ros2:
+  ros__parameters:
+
+    evaluation:
+
+      drop_prob_good: 0.05
+      drop_prob_bad: 0.6
+      p_good_to_bad: 0.1
+      p_bad_to_good: 0.3
