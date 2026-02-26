@@ -80,7 +80,7 @@ def generate_launch_description():
 
     estimate_contacts_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(estimate_contacts_launch_file),
-        launch_arguments={'rviz': str(True), "plot": str(True)}.items(),
+        launch_arguments={'rviz': str(True), "plot": str(True), 'config_file': contact_estimator_config}.items(),
         condition=IfCondition(estimate_contacts)
     )
 
